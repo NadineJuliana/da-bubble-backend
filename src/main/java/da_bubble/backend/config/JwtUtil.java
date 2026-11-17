@@ -43,7 +43,8 @@ public class JwtUtil {
                     .verifyWith(key)
                     .build()
                     .parseSignedClaims(token)
-                    .toString();
+                    .getPayload()
+                    .getSubject();
         }catch (JwtException e){
             throw new JwtException("extractEmail returns an invalid value, checkout JwtUtils", e);
         }

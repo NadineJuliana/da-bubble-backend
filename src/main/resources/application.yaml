@@ -1,5 +1,12 @@
 spring:
   application:
     name: backend
+  # TODO: remove this block once the Postgres database is configured
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration
+      - org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration
+      - org.springframework.boot.data.jpa.autoconfigure.DataJpaRepositoriesAutoConfiguration
+
 jwt:
   secret: langerrrrr-texttt-als-bspppppppppp-spaeter-in-der-env-hinterleggttttttttttt

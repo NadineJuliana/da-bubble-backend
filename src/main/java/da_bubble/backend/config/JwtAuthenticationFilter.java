@@ -10,55 +10,39 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
 
 @Component
-public class JwtAuthenticationFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        String requestURI = request.getRequestURI();
         String authHeader = request.getHeader("Authorization");
 
-        // Skip JWT validation for open endpoints
-        if (requestURI.equals("/auth/login") || requestURI.equals("/auth/signup")) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-        // Validate JWT for protected endpoints
+        // Only if a valid token is sent, the user gets logged in for this request.
+        // Whether a path is open or protected is decided in SecurityConfig, not here.
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            try {
+
+            if (jwtUtil.validateToken(token) && SecurityContextHolder.getContext().getAuthentication() == null) {
                 String email = jwtUtil.extractEmail(token);
-                if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    if (jwtUtil.validateToken(token)) {
-                        User userDetails = new User(email, "", Collections.emptyList());
-                        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                        auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(auth);
-                    }
-                }
-            } catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType("application/json");
-                response.getWriter().write("{\"message\": \"Invalid or expired JWT token\"}");
-                return;
+
+                User userDetails = new User(email, "", Collections.emptyList());
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(auth);
             }
-        } else {
-            // Block requests without a valid token
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"message\": \"Authorization header is missing or invalid\"}");
-            return;
         }
 
+        // Always continue. Without authentication, Spring Security blocks protected paths with 401.
         chain.doFilter(request, response);
     }
 }
