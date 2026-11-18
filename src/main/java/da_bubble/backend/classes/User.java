@@ -1,25 +1,45 @@
 package da_bubble.backend.classes;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
-
-import java.util.Collection;
-import java.util.List;
 
 @Data
 @Entity
+@Table(name = "users")
 public class User {
 
-    //TODO: nach dem verknüpfen der DB die richtigen anotation setzen
-    private Number id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Integer id;
+
+    @NotNull
+    @Column(name = "first_name")
     private String firstName;
+
+    @NotNull
+    @Column(name = "last_name")
     private String lastName;
+
+    @NotNull
+    @Column(name = "email")
     private String email;
+
+    @NotNull
+    @Min(value = 8, message = "Invalid Password!")
+    @Column(name = "password")
     private String password;
 
+    @NotNull
+    @Column(name = "is_online")
+    private boolean isOnline;
 
-    public User() {
-    }
+    @NotNull
+    @Column(name = "is_active")
+    private boolean isActive;
 
+    @Column(name = "avatar_img")
+    private Integer avatarImg;
 }
