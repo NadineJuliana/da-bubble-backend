@@ -17,9 +17,11 @@ public class User {
 
     @NotNull
     @Column(name = "first_name")
+    @Min(value = 3, message = "First name to short!")
     private String firstName;
 
     @NotNull
+    @Min(value = 3, message = "Last name to short!")
     @Column(name = "last_name")
     private String lastName;
 
