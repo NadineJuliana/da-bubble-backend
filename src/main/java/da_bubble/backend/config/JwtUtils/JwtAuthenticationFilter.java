@@ -1,4 +1,4 @@
-package da_bubble.backend.config;
+package da_bubble.backend.config.JwtUtils;
 
 import org.springframework.security.core.userdetails.User;
 import jakarta.servlet.FilterChain;
@@ -32,7 +32,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
 
-            if (jwtUtil.validateToken(token) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // only access tokens are accepted here, a refresh token gets 401
+            if (jwtUtil.isValidAccessToken(token) && SecurityContextHolder.getContext().getAuthentication() == null) {
                 String email = jwtUtil.extractEmail(token);
 
                 User userDetails = new User(email, "", Collections.emptyList());

@@ -1,10 +1,10 @@
-package da_bubble.backend.controller;
+package da_bubble.backend.auth.register;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record testRegisterDTO(
+public record RegisterUerDTO(
 
         @NotBlank(message = "First name is required!")
         @Size(min = 3, max = 50, message = "First name must be between 3 and 50 characters!")
