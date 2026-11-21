@@ -21,13 +21,12 @@ public class LoginController {
     }
 
     @PostMapping("/auth/login")
-    public TokenResponseDTO login(@Valid @RequestBody LoginDTO body) {
-        TokenResponseDTO trDTO = loginService.loginUser(body;
+    public ResponseEntity<TokenResponseDTO> login(@Valid @RequestBody LoginDTO body) {
+        TokenResponseDTO trDTO = loginService.loginUser(body);
 
         if (trDTO != null){
-            return new ResponseEntity<TokenResponseDTO>(trDTO, HttpStatus.OK).getBody();
+            return new ResponseEntity<TokenResponseDTO>(trDTO, HttpStatus.OK);
         }
-        //TODO: set right return type
-        return new ResponseEntity<TokenResponseDTO>(null, HttpStatus.FAILED_DEPENDENCY);
+        return new ResponseEntity<TokenResponseDTO>((TokenResponseDTO) null, HttpStatus.FAILED_DEPENDENCY);
     }
 }
