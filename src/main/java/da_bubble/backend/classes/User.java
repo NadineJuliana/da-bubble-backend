@@ -1,8 +1,8 @@
 package da_bubble.backend.classes;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -16,21 +16,21 @@ public class User {
     private Integer id;
 
     @NotNull
+    @Size(min = 3, max = 50, message = "First name must be between 3 and 50 characters!")
     @Column(name = "first_name")
-    @Min(value = 3, message = "First name to short!")
     private String firstName;
 
     @NotNull
-    @Min(value = 3, message = "Last name to short!")
+    @Size(min = 3, max = 50, message = "Last name must be between 3 and 50 characters!")
     @Column(name = "last_name")
     private String lastName;
+
 
     @NotNull
     @Column(name = "email")
     private String email;
 
     @NotNull
-    @Min(value = 8, message = "Invalid Password!")
     @Column(name = "password")
     private String password;
 
